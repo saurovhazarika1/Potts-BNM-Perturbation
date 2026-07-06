@@ -204,3 +204,59 @@ City of Hope (former)
 ## Disclaimer
 
 This repository contains an actively developing theoretical framework. Mathematical formulations, algorithms, and implementation details may evolve as the methodology is refined and experimentally validated.
+# Potts-BNM-Perturbation: Full Toy Pipeline
+
+This toy repository implements the full prototype workflow:
+
+```text
+WT Potts model
+→ WT sampled trajectory
+→ mock Frustratometer mutation energetics
+→ target marginal P_m^target(a)
+→ maximum-entropy mutant ensemble
+→ exact inverse Potts refit
+→ ΔJ network changes
+```
+
+This is a **toy model** for testing the math and file flow. For real proteins, replace the mock Frustratometer data and exact inverse-Potts refit with your real data and scalable inverse-Potts code.
+
+## Scripts
+
+- `00_make_toy_data.py`  
+  Creates a 5-residue, 3-state WT Potts model, samples WT configurations, and creates mock AMBER/Frustratometer frame data.
+
+- `01_build_target_marginal.py`  
+  Converts Frustratometer WT/mutant energies into a perturbed AMBER-like residue energy, re-bins it, and computes `P_m^target(a)`.
+
+- `02_max_entropy_update.py`  
+  Finds `lambda_m(a)` so that  
+  `P_mut(sigma) ∝ P_WT(sigma) exp(lambda_m(sigma_m))`  
+  matches the target marginal.
+
+- `03_refit_exact_potts_toy.py`  
+  Refits a Potts model to the inferred mutant ensemble using exact enumeration. This is only for toy systems.
+
+- `run_toy_pipeline.sh`  
+  Runs everything.
+
+## Run
+
+```bash
+pip install -r requirements.txt
+bash run_toy_pipeline.sh
+```
+
+## Outputs
+
+Important output files:
+
+```text
+toy_target.target_marginal.csv
+toy_maxent.lambda.csv
+toy_maxent.mutant_marginals.csv
+toy_maxent.samples.npy
+toy_refit.delta_J.csv
+toy_refit_h_mut.npy
+toy_refit_J_mut.npy
+```
+
